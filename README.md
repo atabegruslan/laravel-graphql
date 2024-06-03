@@ -201,8 +201,124 @@ const app = new Vue({
 
 ```
 npm install --save-dev vue @vitejs/plugin-vue
-npm install --save graphql graphql-tag @apollo/client
+npm install --save graphql graphql-tag @apollo/client @vue/apollo-composable
 ```
+
+`vite.config.js`
+```js
+import { defineConfig } from 'vite';
+import laravel from 'laravel-vite-plugin';
+import vue from '@vitejs/plugin-vue';
+
+export default defineConfig({
+    plugins: [
+        laravel({
+            input: ['resources/css/app.css', 'resources/js/app.js'],
+            refresh: true,
+        }),
+        vue({ 
+            template: {
+                transformAssetUrls: {
+                    base: null,
+                    includeAbsolute: false,
+                },
+            },
+        }),
+    ],
+    resolve: { 
+        alias: {
+            vue: 'vue/dist/vue.esm-bundler.js',
+        },
+    },
+});
+```
+
+`resources/js/app.js`
+```js
+import './bootstrap';
+
+import { createApp, provide, h } from 'vue';
+import { DefaultApolloClient } from '@vue/apollo-composable';
+import { ApolloClient, createHttpLink, InMemoryCache } from '@apollo/client/core';
+
+import GraphQlCrud from './components/GraphQlCrud.vue';
+
+const httpLink = createHttpLink({
+  uri: `${window.location.origin}/graphql`,
+})
+
+const cache = new InMemoryCache()
+
+const apolloClient = new ApolloClient({
+  link: httpLink,
+  cache,
+})
+
+const app = createApp({
+    setup () {
+        provide(DefaultApolloClient, apolloClient)
+    },
+    render: () => h(GraphQlCrud)
+});
+
+app.mount("#vuepart")
+```
+
+`resources/views/welcome.blade.php`
+```html
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body>
+    <div id="vuepart">
+    </div>
+</body>
+```
+
+`resources/js/components/ExampleComponent.vue`
+```html
+<template>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">GraphQL CRUD</div>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="loading">Loading..</div>
+        <div v-else>
+            <ul v-if="result && result.users">
+                <li v-for="user in result.users" :key="user.id">
+                    {{user.name}} {{user.email}}
+                </li>
+            </ul>
+        </div>
+    </div>
+</template>
+
+<script>
+    import { useQuery, useMutation  } from '@vue/apollo-composable'
+    import gql from 'graphql-tag'
+
+    export default {
+        setup () {
+            const { result, loading } = useQuery(gql`
+                query getUsers {
+                    users {
+                        email
+                        name
+                    }
+                }
+            `);
+
+            return { result, loading };
+        }
+    };
+</script>
+```
+
+![](/Illustrations/apollo-simple.png)
 
 ---
 

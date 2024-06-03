@@ -3,11 +3,7 @@
         <div class="row justify-content-center">
             <div class="col-md-8">
                 <div class="card">
-                    <div class="card-header">Example Component</div>
-
-                    <div class="card-body">
-                        I'm an example component.
-                    </div>
+                    <div class="card-header">GraphQL CRUD</div>
                 </div>
             </div>
         </div>
@@ -16,7 +12,7 @@
         <div v-else>
             <ul v-if="result && result.users">
                 <li v-for="user in result.users" :key="user.id">
-                    {{user.name}} {{user.email }}
+                    {{user.name}} {{user.email}}
                 </li>
             </ul>
         </div>
