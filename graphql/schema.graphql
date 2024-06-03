@@ -8,3 +8,20 @@ type Query {
   user(id: ID! @eq): User @find
   users: [User!]! @all
 }
+
+type Mutation {
+  createUser(input: CreateUserInput @spread): User @create
+  updateUser(id: ID!, input: UpdateUserInput @spread): User @update
+  deleteUser(id: ID!): User @delete
+}
+
+input CreateUserInput{
+  name: String!
+  email: String! @rules(apply:["email","unique:users,email"])
+  password: String! @hash @rules(apply:["min:5"])
+}
+
+input UpdateUserInput{
+  name: String!
+  password: String! @hash @rules(apply:["min:5"])
+}

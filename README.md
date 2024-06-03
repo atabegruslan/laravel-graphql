@@ -13,8 +13,6 @@
 composer require nuwave/lighthouse
 ```
 
-Note! and note that Laravel 8 goes well with Lighthouse v4.17.0
-
 https://github.com/nuwave/lighthouse/releases
 
 ```
@@ -198,6 +196,7 @@ const app = new Vue({
 - https://www.youtube.com/watch?v=t7W5vl0kzXU
   - https://github.com/ajayyadavexpo/laravel-9-graphql-vue-3-crud/blob/master/resources/js/app.js
 - https://v4.apollo.vuejs.org/guide/installation.html
+  - https://v4.apollo.vuejs.org/guide-composable/query.html
 
 ```
 npm install --save-dev vue @vitejs/plugin-vue
@@ -319,6 +318,98 @@ app.mount("#vuepart")
 ```
 
 ![](/Illustrations/apollo-simple.png)
+
+Now we have the simplest setup finished
+
+---
+
+# Complete the CRUD - Backend
+
+`schema.graphql`
+```
+type User {
+  id: ID!
+  name: String!
+  email: String!
+}
+
+type Query {
+  user(id: ID! @eq): User @find
+  users: [User!]! @all
+}
+
+type Mutation {
+  createUser(input: CreateUserInput @spread): User @create
+  updateUser(id: ID!, input: UpdateUserInput @spread): User @update
+  deleteUser(id: ID!): User @delete
+}
+
+input CreateUserInput{
+  name: String!
+  email: String! @rules(apply:["email","unique:users,email"])
+  password: String! @hash @rules(apply:["min:5"])
+}
+
+input UpdateUserInput{
+  name: String!
+  password: String! @hash @rules(apply:["min:5"])
+}
+```
+
+Read All
+```
+query {
+    users {
+        email
+        name
+    }
+}
+```
+
+Read One
+```
+query {
+  user(id: 1) {
+    id
+    name
+    email
+  }
+}
+```
+
+Create
+```
+mutation {
+  createUser(input: {
+    name:"John Poe"
+    email:"john.poe@example.com"
+    password: "password"
+  }) {
+    id
+    name
+    email
+  }
+}
+```
+
+Update
+```
+mutation {
+  updateUser(id: 1, input: {
+    name:"John Poe"
+    password: "password"
+  }) {
+    id
+    name
+    email
+  }
+}
+```
+
+Delete
+```
+
+```
 
 ---
 
