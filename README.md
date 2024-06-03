@@ -103,7 +103,7 @@ Vue.use(VueApollo)
 Vue.component('example', require('./components/ExampleComponent.vue').default);
 
 const apolloClient = new ApolloClient({
-  uri: 'http://localhost/laravel_notes/public/graphql'
+  uri: 'http://127.0.0.1:8000/graphql'
 });
 
 const apolloProvider = new VueApollo({

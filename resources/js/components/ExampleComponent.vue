@@ -12,39 +12,33 @@
             </div>
         </div>
 
-        <div>
-            <div v-for="user in users">
-                <h1>Name: {{user.name}}</h1>
-                <p>Email: {{user.email }}</p>
-            </div>
+        <div v-if="loading">Loading..</div>
+        <div v-else>
+            <ul v-if="result && result.users">
+                <li v-for="user in result.users" :key="user.id">
+                    {{user.name}} {{user.email }}
+                </li>
+            </ul>
         </div>
     </div>
 </template>
 
 <script>
+    import { useQuery, useMutation  } from '@vue/apollo-composable'
     import gql from 'graphql-tag'
 
     export default {
-        mounted() {
-            console.log('Component mounted.');
-        },
-        data: function() {
-            return {
-                //query data is added
-                users: {}
-            };
-        },
-        apollo: {
-            //this query will update the `users` data property
-            users: {
-                query: gql`
-                {
+        setup () {
+            const { result, loading } = useQuery(gql`
+                query getUsers {
                     users {
-                        name
                         email
+                        name
                     }
-                }`
-            }
+                }
+            `);
+
+            return { result, loading };
         }
     };
 </script>
