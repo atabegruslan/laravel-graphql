@@ -2,6 +2,7 @@
 
 - https://www.youtube.com/playlist?list=PLEhEHUEU3x5qsA5JnRzhgOghrH9Vqz4cg
 - https://www.youtube.com/watch?v=4z3EMCc4bP4
+- https://www.freecodecamp.org/news/build-a-graphql-api-using-laravel
 
 ## Lighthouse at back
 
